@@ -1,2 +1,31 @@
 ---
-# tasks file for ansible-role-i3
+- name: Ensure i3 config repo is cloned locally.
+  git:
+    repo: "{{ i3_config_repo }}"
+    dest: "{{ i3_config_repo_local_destination }}"
+    version: "{{ i3_config_repo_version }}"
+    accept_hostkey: "{{ i3_config_repo_accept_hostkey }}"
+  become: false
+
+- name: Ensure all config dirs are links.
+  command: "ls -F {{ i3_config_home }}/{{ item }}"
+  register: existing_config_info
+  failed_when: false
+  check_mode: false
+  changed_when: false
+  with_items: "{{ i3_config_dirs }}"
+
+- name: Remove existing config dirs if a replacement is being linked.
+  file:
+    path: "{{ i3_config_home }}/{{ i3_config_dirs[item.0] }}"
+    state: absent
+  when: "'@' bot in item.1.stdout"
+  with_indexed_items: "{{ existing_config_info.results }}"
+
+- name: Link config dirs into config home folder.
+  file:
+    src: "{{ i3_config_repo_local_destination }}/{{ item }}"
+    dest: "{{ i3_config_home }}/{{ item }}"
+    state: link
+  become: false
+  with_items: "{{ i3_config_dirs }}"

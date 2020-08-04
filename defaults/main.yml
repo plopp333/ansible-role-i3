@@ -1,2 +1,10 @@
 ---
-# defaults file for ansible-role-i3
+i3_config_repo: git@github.com:plopp333/config-i3.git
+i3_config_repo_version: master
+i3_config_repo_accept_hostkey: false
+i3_config_repo_local_destination: ~/Development/GitHub/config-i3
+i3_config_home: ~/.config
+i3_config_dirs:
+  - i3
+  - polybar
+  - rofi
