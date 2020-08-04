@@ -19,7 +19,7 @@
   file:
     path: "{{ i3_config_home }}/{{ i3_config_dirs[item.0] }}"
     state: absent
-  when: "'@' bot in item.1.stdout"
+  when: "'@' not in item.1.stdout"
   with_indexed_items: "{{ existing_config_info.results }}"
 
 - name: Link config dirs into config home folder.
